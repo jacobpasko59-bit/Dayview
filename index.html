@@ -1,0 +1,522 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f8ff">
+<meta name="description" content="Dayview — explore your world, capture moments, and discover something new every day.">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.png">
+<title>Dayview — Discover Your World</title>
+<style>
+:root {
+  --blue:#426bfa;
+  --blue-light:#edf2ff;
+  --ink:#17213a;
+  --muted:#778198;
+  --line:#e9edf5;
+  --bg:#f6f8fc;
+  --white:#fff;
+  --gold:#e4ac39;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,textarea {font:inherit}
+button {cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible {
+  outline:3px solid #9ab0ff;outline-offset:2px
+}
+.app {max-width:540px;min-height:100vh;margin:auto;background:white;position:relative;padding-bottom:94px}
+header {
+  height:66px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;border-bottom:1px solid var(--line);background:#ffffffed;
+  position:sticky;top:0;z-index:5;backdrop-filter:blur(16px)
+}
+.brand {display:flex;align-items:center;gap:10px;font-size:23px;font-weight:850;letter-spacing:-1px}
+.logo {
+  width:37px;height:37px;border-radius:13px;background:linear-gradient(140deg,#6594ff,#4054ec);
+  color:white;display:grid;place-items:center;font-size:23px;
+}
+.header-actions {display:flex;align-items:center;gap:10px}
+.icon-btn {
+  width:39px;height:39px;border:1px solid var(--line);border-radius:14px;
+  background:white;color:var(--ink);font-size:18px
+}
+.wallet {background:#fff8df;border-radius:22px;padding:9px 12px;font-weight:800;font-size:13px}
+main {padding:20px 18px}
+.page {display:none}
+.page.active {display:block;animation:appear .18s ease}
+@keyframes appear {from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
+.eyebrow {font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.6px;color:var(--blue)}
+h1 {font-size:30px;letter-spacing:-1.2px;line-height:1.15;margin:8px 0}
+h2 {font-size:20px;letter-spacing:-.5px;margin:0 0 13px}
+h3 {font-size:15px;margin:0 0 7px}
+p {line-height:1.55}
+.muted {color:var(--muted);font-size:13px}
+.section {margin-top:26px}
+.hero {
+  border-radius:25px;padding:23px;color:white;
+  background:linear-gradient(135deg,#3156e9,#7095ff);
+  position:relative;overflow:hidden
+}
+.hero:after {content:"";position:absolute;width:190px;height:190px;border:1px solid #ffffff40;border-radius:50%;right:-65px;top:-55px;box-shadow:0 0 0 24px #ffffff0b,0 0 0 48px #ffffff0b}
+.hero h1 {font-size:30px;max-width:290px}
+.hero p {font-size:13px;max-width:290px;color:#edf1ff}
+.primary,.secondary,.danger {
+  border:0;border-radius:14px;padding:12px 16px;font-weight:750;
+}
+.primary {background:var(--blue);color:white}
+.hero .primary {background:white;color:#3156e9;position:relative;z-index:1}
+.secondary {background:var(--blue-light);color:var(--blue)}
+.danger {background:#fff0f0;color:#c34545}
+.full {width:100%}
+.pill {padding:7px 11px;background:#f1f4fa;border-radius:30px;font-size:11px;font-weight:750;display:inline-block}
+.stories {display:flex;gap:15px;overflow-x:auto;padding:3px 0 7px}
+.story {flex:0 0 66px;text-align:center;font-size:11px;color:var(--muted)}
+.story-ring {width:61px;height:61px;border-radius:50%;padding:3px;margin:auto auto 7px;background:linear-gradient(135deg,#6e91ff,#c3d0ff)}
+.story-ring div {height:100%;border:3px solid white;border-radius:50%;background:#f0f3ff;display:grid;place-items:center;font-size:26px}
+.story.add .story-ring {background:#e9edfa}
+.card {border:1px solid var(--line);border-radius:20px;background:white;padding:15px;margin-top:13px}
+.post-head {display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.avatar {width:40px;height:40px;border-radius:14px;background:#eaf0ff;display:grid;place-items:center;font-size:21px;flex-shrink:0}
+.avatar.gold {background:#fff1c9}
+.post-head .person {flex:1}
+.post-head strong {font-size:13px}
+.post-head .muted {font-size:11px;margin-top:3px}
+.post-art {min-height:170px;border-radius:16px;background:linear-gradient(145deg,#dceaff,#b5d5cb);display:grid;place-items:center;overflow:hidden}
+.post-art .emoji {font-size:80px;filter:drop-shadow(0 8px 10px #294a3930)}
+.post-art img {width:100%;max-height:340px;object-fit:cover}
+.post-copy {font-size:13px;margin:12px 0}
+.post-actions {display:flex;gap:17px}
+.text-btn {border:0;background:none;padding:7px 0;color:#596780;font-size:13px;font-weight:700}
+.text-btn.liked {color:#e04d73}
+.grid2 {display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat {border:1px solid var(--line);border-radius:17px;padding:15px}
+.stat strong {font-size:25px;display:block;letter-spacing:-1px}
+.stat span {font-size:11px;color:var(--muted)}
+.globe {
+  margin-top:18px;aspect-ratio:1;border-radius:50%;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 35% 28%,#bce5e8 0 5%,#65c6bf 20%,#238da9 55%,#174579 78%,#102a59);
+  box-shadow:inset -24px -12px 45px #071d4d99,inset 8px 8px 30px #ffffff45,0 14px 35px #1b579329;
+}
+.globe:before {content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 38px,#ffffff25 39px 40px,transparent 41px 78px);border-radius:50%;transform:scaleX(.7)}
+.land {position:absolute;background:#a7d6a3;opacity:.95;filter:drop-shadow(0 2px 1px #135c7050)}
+.land.one {width:34%;height:36%;left:15%;top:17%;border-radius:60% 25% 65% 30%;transform:rotate(-22deg)}
+.land.two {width:23%;height:43%;left:36%;top:42%;border-radius:25% 65% 35% 65%;transform:rotate(18deg)}
+.land.three {width:36%;height:24%;right:6%;top:28%;border-radius:45% 25% 45% 30%;transform:rotate(18deg)}
+.pin {position:absolute;border:0;border-radius:20px;background:white;padding:7px 9px;font-size:11px;font-weight:800;box-shadow:0 3px 12px #102b5b40}
+.pin:before {content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#5b80ff;margin-right:5px}
+.pin.a {left:8%;top:32%}.pin.b {right:3%;top:49%}.pin.c {left:33%;bottom:18%}
+.map-note {display:flex;gap:10px;align-items:center;background:#f3f6ff;padding:13px;border-radius:14px;margin-top:14px;font-size:12px}
+.mission {display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.mission:last-child {border-bottom:0}
+.mission-icon {width:47px;height:47px;background:#f0f3ff;border-radius:15px;display:grid;place-items:center;font-size:24px}
+.mission-copy {flex:1}
+.mission-copy strong {font-size:13px}
+.mission-copy p {margin:4px 0 0;font-size:11px;color:var(--muted)}
+.reward {font-size:12px;font-weight:850;color:#b77b12;white-space:nowrap}
+.creature {padding:16px;border-radius:20px;border:1px solid var(--line);text-align:center}
+.creature-art {height:112px;border-radius:16px;background:#f1f4ff;display:grid;place-items:center;font-size:65px;margin-bottom:12px}
+.creature p {font-size:11px;color:var(--muted);margin:5px 0 12px}
+.profile-cover {height:110px;border-radius:20px;background:linear-gradient(125deg,#3d62f0,#9bb7ff)}
+.profile-top {display:flex;align-items:end;gap:12px;margin:-35px 0 15px 14px}
+.profile-avatar {width:80px;height:80px;border:4px solid white;border-radius:24px;background:#e9efff;display:grid;place-items:center;font-size:36px}
+.profile-top h2 {margin:0}
+.profile-info {font-size:12px;color:var(--muted);margin-top:4px}
+.field {margin:13px 0}
+.field label {display:block;font-size:12px;font-weight:750;margin-bottom:7px}
+.field input,.field textarea {width:100%;border:1px solid #dfe5f0;border-radius:13px;padding:12px;background:white;color:var(--ink)}
+.field textarea {min-height:80px;resize:vertical}
+.notice {padding:12px;background:#f5f7fb;border-radius:13px;font-size:12px;line-height:1.5;color:#63708a}
+.bottom-nav {
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(540px,100%);
+  background:#ffffffef;backdrop-filter:blur(18px);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);padding:8px 7px max(9px,env(safe-area-inset-bottom));z-index:10
+}
+.nav-btn {border:0;background:none;color:#929bb0;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:750;padding:5px 0}
+.nav-btn .nav-icon {font-size:21px;height:25px}
+.nav-btn.active {color:var(--blue)}
+.camera-fab {width:52px;height:52px;border-radius:18px;border:4px solid white;background:var(--blue);color:white;font-size:24px;margin-top:-23px;box-shadow:0 5px 18px #426bfa45}
+.empty {padding:25px;text-align:center;color:var(--muted);font-size:13px}
+hr {border:0;border-top:1px solid var(--line);margin:18px 0}
+.toast {position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#17213a;color:white;border-radius:13px;padding:12px 16px;font-size:12px;z-index:20;max-width:90%;display:none}
+@media(min-width:700px) {
+  body {padding:20px 0}
+  .app {border-radius:25px;overflow:hidden;box-shadow:0 12px 60px #22345c13}
+  header {position:relative}
+  .bottom-nav {bottom:20px;border-radius:0 0 25px 25px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">◉</div>dayview</div>
+  <div class="header-actions">
+    <div class="wallet">🪙 <span id="tokenCount">100</span></div>
+    <button class="icon-btn" aria-label="Notifications" onclick="showPage('notifications')">♧</button>
+  </div>
+</header>
+
+<main>
+<section class="page active" id="home">
+  <div class="eyebrow" id="greeting">YOUR WORLD, TODAY</div>
+  <h1>Make today<br>worth remembering.</h1>
+  <p class="muted">Discover what's happening around you.</p>
+  <div class="hero">
+    <div class="eyebrow" style="color:#dce5ff">A LITTLE ADVENTURE AWAITS</div>
+    <h1>There's more to discover.</h1>
+    <p>Explore new places, capture real moments, and collect memories along the way.</p>
+    <button class="primary" onclick="showPage('discover')">Explore the world →</button>
+  </div>
+
+  <div class="section">
+    <h2>Your people</h2>
+    <div class="stories">
+      <div class="story add" onclick="showPage('camera')"><div class="story-ring"><div>＋</div></div>Your moment</div>
+      <div class="story"><div class="story-ring"><div>🦊</div></div>Ember</div>
+      <div class="story"><div class="story-ring"><div>🌿</div></div>Discover</div>
+      <div class="story"><div class="story-ring"><div>🦉</div></div>Verified</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Community feed</h2>
+    <p class="muted">A preview of your Dayview feed.</p>
+    <div id="feed"></div>
+  </div>
+</section>
+
+<section class="page" id="discover">
+  <div class="eyebrow">LOOK A LITTLE CLOSER</div>
+  <h1>Discover</h1>
+  <p class="muted">A world full of moments waiting to be found.</p>
+  <div class="globe" aria-label="Illustrated world discovery globe">
+    <div class="land one"></div><div class="land two"></div><div class="land three"></div>
+    <button class="pin a" onclick="toast('Forest Discovery is a sample destination.')">🌲 Forest</button>
+    <button class="pin b" onclick="toast('Crystal Coast is a sample destination.')">🌊 Coast</button>
+    <button class="pin c" onclick="toast('Hidden Meadow is a sample destination.')">🌼 Meadow</button>
+  </div>
+  <div class="map-note"><span style="font-size:24px">🌎</span><div><strong>Explore everywhere</strong><br>Discover destinations around the world. Live community locations require a connected backend.</div></div>
+  <div class="section">
+    <h2>Places to discover</h2>
+    <div class="card" style="display:flex;gap:13px;align-items:center"><div class="avatar">🌲</div><div style="flex:1"><strong>Forest Discovery</strong><div class="muted">Nature · Sample destination</div></div><span>→</span></div>
+    <div class="card" style="display:flex;gap:13px;align-items:center"><div class="avatar">🌊</div><div style="flex:1"><strong>Crystal Coast</strong><div class="muted">Water · Sample destination</div></div><span>→</span></div>
+    <div class="card" style="display:flex;gap:13px;align-items:center"><div class="avatar">🌼</div><div style="flex:1"><strong>Hidden Meadow</strong><div class="muted">Wildlife · Sample destination</div></div><span>→</span></div>
+  </div>
+</section>
+
+<section class="page" id="camera">
+  <div class="eyebrow">CAPTURE THE MOMENT</div>
+  <h1>Your Dayview</h1>
+  <p class="muted">Take a photo or choose one from your device.</p>
+  <div class="card">
+    <label class="primary full" style="display:block;text-align:center" for="photoInput">📸 Open camera / choose photo</label>
+    <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+    <div id="photoPreview" class="post-art" style="margin-top:14px;display:none"></div>
+    <div class="field"><label for="caption">What's happening?</label><textarea id="caption" placeholder="Share the moment..."></textarea></div>
+    <div class="field"><label for="visibility">Who can see this post?</label>
+      <select id="visibility" style="width:100%;padding:12px;border:1px solid #dfe5f0;border-radius:13px;background:white">
+        <option value="Public">Public preview</option><option value="Friends">Friends only (preview)</option><option value="Private">Only me (preview)</option>
+      </select>
+    </div>
+    <button class="primary full" onclick="createPost()">Create local preview post</button>
+    <p class="muted">This version keeps posts on this device. Publishing to other users requires backend setup.</p>
+  </div>
+  <div class="notice">📍 Location is not collected or shared by this prototype. Live location must be explicitly enabled with clear privacy controls.</div>
+</section>
+
+<section class="page" id="map">
+  <div class="eyebrow">YOUR DAILY ADVENTURE</div>
+  <h1>Map & Missions</h1>
+  <p class="muted">Small moments. New discoveries. Earn tokens.</p>
+  <div class="map-note"><span style="font-size:26px">🧭</span><div><strong>Your adventure starts here</strong><br>Sample missions are available below. GPS and live maps aren't connected yet.</div></div>
+  <div class="section">
+    <h2>Daily missions</h2>
+    <div class="card" id="missionList"></div>
+  </div>
+  <div class="notice" style="margin-top:15px">Safety first: only complete missions in safe, permitted places. Never enter roads or dangerous areas to take a photo.</div>
+</section>
+
+<section class="page" id="creatures">
+  <div class="eyebrow">YOUR LITTLE COMPANIONS</div>
+  <h1>Creatures</h1>
+  <p class="muted">Collect companions and take them along on your journey.</p>
+  <div class="grid2">
+    <div class="creature"><div class="creature-art">🦊</div><h3>Ember the Fox</h3><span class="pill">COMMON · STARTER</span><p>Your permanent starter companion.</p><button class="secondary full" onclick="toast('Ember is your starter companion.')">Your companion</button></div>
+    <div class="creature"><div class="creature-art">🦉</div><h3>Verified Owl</h3><span class="pill">COMMUNITY VERIFIED</span><p>A special, protected verification collectible.</p><button class="secondary full" onclick="toast('Verification is not yet connected.')">Learn more</button></div>
+    <div class="creature"><div class="creature-art">🦋</div><h3>Blue Flutter</h3><span class="pill">RARE CONCEPT</span><p>A preview of future creatures.</p><button class="secondary full" onclick="showPage('shop')">Token shop</button></div>
+    <div class="creature"><div class="creature-art">🐉</div><h3>Sky Guardian</h3><span class="pill">LEGENDARY CONCEPT</span><p>Planned for future collections.</p><button class="secondary full" onclick="showPage('shop')">Token shop</button></div>
+  </div>
+  <div class="notice" style="margin-top:15px">Creature ownership, rarity, trading, and verification will need server-side validation before launch.</div>
+</section>
+
+<section class="page" id="community">
+  <div class="eyebrow">MOMENTS FROM EVERYWHERE</div><h1>Community</h1>
+  <p class="muted">Your local sample feed and posts created on this device.</p>
+  <div id="communityFeed"></div>
+</section>
+
+<section class="page" id="friends">
+  <div class="eyebrow">YOUR CIRCLE</div><h1>Friends</h1>
+  <div class="card">
+    <h3>Find your people</h3><p class="muted">Real friend requests and shared friend lists will be enabled when accounts are connected.</p>
+    <div class="field"><label for="friendName">Friend's username</label><input id="friendName" placeholder="Enter a username"></div>
+    <button class="primary full" onclick="toast('Friend requests will work after account setup.')">Find friends</button>
+  </div>
+  <div class="section"><h2>Your companion</h2><div class="card"><div class="post-head"><div class="avatar">🦊</div><div class="person"><strong>Ember the Fox</strong><div class="muted">Always by your side</div></div></div></div></div>
+</section>
+
+<section class="page" id="messages">
+  <div class="eyebrow">STAY CONNECTED</div><h1>Messages</h1>
+  <div class="card"><div class="empty">💬<h3>No conversations yet</h3>Private messaging requires authenticated accounts and secure backend policies.</div></div>
+</section>
+
+<section class="page" id="notifications">
+  <div class="eyebrow">WHAT'S NEW</div><h1>Notifications</h1>
+  <div class="card"><div class="empty">✨<h3>You're all caught up</h3>Real notifications will appear here after backend setup.</div></div>
+</section>
+
+<section class="page" id="shop">
+  <div class="eyebrow">EARNED, NEVER BOUGHT</div><h1>Token Shop</h1>
+  <p class="muted">Your tokens are earned through activity. No real-money token purchases.</p>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px"><div class="avatar">🦋</div><div style="flex:1"><strong>Blue Flutter</strong><div class="muted">Sample creature · 50 tokens</div></div><button class="secondary" onclick="redeem(50,'Blue Flutter')">50 🪙</button></div>
+    <hr>
+    <div style="display:flex;align-items:center;gap:10px"><div class="avatar">🐸</div><div style="flex:1"><strong>Meadow Hopper</strong><div class="muted">Sample creature · 30 tokens</div></div><button class="secondary" onclick="redeem(30,'Meadow Hopper')">30 🪙</button></div>
+  </div>
+  <div class="notice" style="margin-top:15px">Purchases here are demonstration interactions only. No real inventory or server-backed transactions exist yet.</div>
+  <div class="section"><h2>Cosmetics Shop</h2><div class="card"><strong>🎀 Style your companion</strong><p class="muted">A separate real-money cosmetics shop is planned for outfits and accessories only. It won't sell tokens or grant verification or leadership privileges.</p></div></div>
+</section>
+
+<section class="page" id="plus">
+  <div class="eyebrow">MORE TO DISCOVER</div><h1>Dayview+</h1>
+  <div class="hero"><div class="eyebrow" style="color:#e5eaff">YOUR NEXT CHAPTER</div><h1>More adventures await.</h1><p>Planned benefits include faster token earning, eligible premium creatures, and friend-only trading.</p></div>
+  <div class="card"><h3>Included in the plan</h3><p>✦ Faster eligible token earning</p><p>✦ Access to premium collections</p><p>✦ Trading with friends</p><p>✦ Limited-edition opportunities</p><button class="secondary full" onclick="toast('Subscriptions are not enabled in this prototype.')">Explore Dayview+</button></div>
+  <p class="muted">Subscription billing and entitlement checks must be securely implemented before launch.</p>
+</section>
+
+<section class="page" id="profile">
+  <div class="eyebrow">YOUR SPACE</div><h1>My Profile</h1>
+  <div class="profile-cover"></div>
+  <div class="profile-top"><div class="profile-avatar">🧑</div><div style="padding-bottom:7px"><h2 id="profileName">Dayview Explorer</h2><div class="profile-info">@explorer · Community member</div></div></div>
+  <div class="field"><label for="displayName">Display name</label><input id="displayName" value="Dayview Explorer" maxlength="40"></div>
+  <div class="field"><label for="bioText">Your bio</label><textarea id="bioText" placeholder="A little about you..."></textarea></div>
+  <button class="primary full" onclick="saveProfile()">Save profile on this device</button>
+  <div class="grid2 section"><div class="stat"><strong id="postCount">0</strong><span>Local posts</span></div><div class="stat"><strong id="creatureCount">1</strong><span>Companions</span></div></div>
+  <div class="card"><h3>Founder / CEO</h3><p class="muted">Founder profile preview. A verified CEO role must be assigned securely on the server, never by a browser setting.</p><button class="secondary full" onclick="showPage('ceo')">View CEO profile</button></div>
+</section>
+
+<section class="page" id="ceo">
+  <div class="eyebrow">DAYVIEW LEADERSHIP</div><h1>Founder / CEO</h1>
+  <div class="profile-cover" style="background:linear-gradient(130deg,#9c762c,#f0d17a)"></div>
+  <div class="profile-top"><div class="profile-avatar" style="background:#fff0c8">👑</div><div style="padding-bottom:7px"><h2>Dayview CEO</h2><div class="profile-info">Founder profile preview · Gold badge concept</div></div></div>
+  <div class="notice">This is a design preview, not proof of account ownership. CEO-only controls must be protected with server-side authentication and role checks.</div>
+  <div class="section"><h2>Founder principles</h2>
+    <div class="card"><strong>🔐 Secure leadership</strong><p class="muted">Only authorized leadership can approve verifications, manage cofounder permissions, and issue gifts.</p></div>
+    <div class="card"><strong>🦉 Community verification</strong><p class="muted">Planned eligibility: 50 unique creatures, 60 consecutive qualifying days, good standing, and an authenticity check. No paid subscription required.</p></div>
+    <div class="card"><strong>🎁 Dayview+ gifting</strong><p class="muted">Lifetime gifts and single-use codes require protected backend logic and audit records.</p></div>
+  </div>
+</section>
+
+<section class="page" id="settings">
+  <div class="eyebrow">MAKE IT YOURS</div><h1>Settings</h1>
+  <div class="card">
+    <h3>Account</h3><p class="muted">Authentication and account recovery aren't connected yet.</p>
+    <button class="secondary full" onclick="toast('Account creation will be connected next.')">Connect account</button>
+  </div>
+  <div class="card">
+    <h3>Privacy Center</h3>
+    <p class="muted">Location sharing is off in this prototype.</p>
+    <label style="display:flex;gap:10px;align-items:center;font-size:13px"><input type="checkbox" id="locationOpt" onchange="locationNotice(this)"> Allow location access for a future location feature</label>
+    <p class="muted">Checking this box does not collect or transmit your location. Any live location feature must request permission and explain sharing before activation.</p>
+  </div>
+  <div class="card">
+    <h3>Data on this device</h3><p class="muted">Local demo posts and profile information are stored in this browser.</p>
+    <button class="danger full" onclick="clearLocalData()">Clear local demo data</button>
+  </div>
+  <div class="card"><h3>About Dayview</h3><p class="muted">Discover your world. Capture moments. Find something new every day.</p><span class="pill">EARLY PROTOTYPE</span></div>
+</section>
+</main>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <button class="nav-btn active" data-page="home" onclick="showPage('home')"><span class="nav-icon">⌂</span>Home</button>
+  <button class="nav-btn" data-page="discover" onclick="showPage('discover')"><span class="nav-icon">◎</span>Discover</button>
+  <button class="nav-btn" data-page="camera" onclick="showPage('camera')"><span class="camera-fab">＋</span>Camera</button>
+  <button class="nav-btn" data-page="map" onclick="showPage('map')"><span class="nav-icon">⌖</span>Map</button>
+  <button class="nav-btn" data-page="profile" onclick="showPage('profile')"><span class="nav-icon">♙</span>Profile</button>
+</nav>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const safeRead = (key, fallback) => {
+  try { const value = localStorage.getItem(key); return value ? JSON.parse(value) : fallback; }
+  catch { return fallback; }
+};
+const safeWrite = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch { toast("Device storage is full or unavailable."); return false; }
+};
+
+let tokens = safeRead("dayview_tokens",100);
+let posts = safeRead("dayview_posts",[]);
+let completed = safeRead("dayview_missions",[]);
+let likes = safeRead("dayview_likes",[]);
+let inventory = safeRead("dayview_inventory",["Ember the Fox"]);
+let profile = safeRead("dayview_profile",{name:"Dayview Explorer",bio:""});
+let selectedPhoto = "";
+let toastTimer;
+
+function toast(message) {
+  const el=$("toast");
+  el.textContent=message;el.style.display="block";
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.style.display="none",2800);
+}
+
+function showPage(id) {
+  const page=$(id);
+  if(!page) return;
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  page.classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+  if(id==="community") renderCommunity();
+  if(id==="home") renderFeed();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function updateStats() {
+  $("tokenCount").textContent=tokens;
+  $("postCount").textContent=posts.length;
+  $("creatureCount").textContent=inventory.length;
+  $("profileName").textContent=profile.name || "Dayview Explorer";
+}
+function saveTokens() { safeWrite("dayview_tokens",tokens);updateStats(); }
+
+const samplePosts=[
+  {id:"sample-forest",name:"Nature Explorer",avatar:"🌿",caption:"A little reminder to slow down and enjoy the world around you. 🌲",art:"🌲",time:"Sample post",sample:true},
+  {id:"sample-sky",name:"Verified Owl",avatar:"🦉",caption:"Every day has something new waiting to be discovered. ✨",art:"🌅",time:"Featured sample",sample:true}
+];
+
+function renderFeed() {
+  const list=[...posts].reverse().concat(samplePosts);
+  $("feed").innerHTML=list.map(p=>postHTML(p)).join("");
+}
+function renderCommunity() {
+  const list=[...posts].reverse().concat(samplePosts);
+  $("communityFeed").innerHTML=list.map(p=>postHTML(p)).join("");
+}
+function postHTML(p) {
+  const liked=likes.includes(p.id);
+  const art=p.photo
+    ? `<img src="${p.photo}" alt="Photo shared in a local Dayview preview">`
+    : `<div class="emoji">${escapeHTML(p.art||"🌿")}</div>`;
+  return `<article class="card">
+    <div class="post-head"><div class="avatar">${escapeHTML(p.avatar||"🧑")}</div>
+    <div class="person"><strong>${escapeHTML(p.name||profile.name)}</strong><div class="muted">${escapeHTML(p.time||"Just now")} · ${p.sample?"Example":"Local preview"}</div></div></div>
+    <div class="post-art">${art}</div>
+    <p class="post-copy">${escapeHTML(p.caption||"A moment worth remembering.")}</p>
+    <div class="post-actions"><button class="text-btn ${liked?"liked":""}" onclick="toggleLike('${p.id}')">${liked?"♥":"♡"} ${liked?"Liked":"Like"}</button><button class="text-btn" onclick="toast('Comments will be enabled with the shared backend.')">♡ Comment</button></div>
+  </article>`;
+}
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function toggleLike(id) {
+  likes=likes.includes(id)?likes.filter(x=>x!==id):[...likes,id];
+  safeWrite("dayview_likes",likes);renderFeed();renderCommunity();
+}
+$("photoInput").addEventListener("change",event=>{
+  const file=event.target.files && event.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/")){toast("Choose an image file.");return;}
+  if(file.size>5*1024*1024){toast("For this preview, choose an image under 5 MB.");return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    selectedPhoto=reader.result;
+    $("photoPreview").innerHTML=`<img src="${selectedPhoto}" alt="Your selected photo preview">`;
+    $("photoPreview").style.display="grid";
+  };
+  reader.readAsDataURL(file);
+});
+function createPost() {
+  const caption=$("caption").value.trim();
+  if(!selectedPhoto&&!caption){toast("Choose a photo or write a caption first.");return;}
+  const post={id:"local-"+Date.now(),name:profile.name||"Dayview Explorer",avatar:"🧑",caption:caption||"A moment worth remembering.",photo:selectedPhoto,art:"📷",time:"Just now",visibility:$("visibility").value};
+  posts.push(post);
+  if(!safeWrite("dayview_posts",posts)){posts.pop();return;}
+  selectedPhoto="";
+  $("photoInput").value="";
+  $("photoPreview").style.display="none";
+  $("photoPreview").innerHTML="";
+  $("caption").value="";
+  renderFeed();renderCommunity();updateStats();showPage("home");
+  toast("Local preview post created!");
+}
+const missions=[
+  {id:"sky",icon:"🌅",name:"Look up",desc:"Photograph a sunrise or sunset.",reward:10},
+  {id:"nature",icon:"🌼",name:"Find something growing",desc:"Capture a flower or plant.",reward:10},
+  {id:"pet",icon:"🐾",name:"Meet a furry friend",desc:"Take a safe photo of a pet.",reward:15},
+  {id:"explore",icon:"🧭",name:"Explore somewhere new",desc:"Discover a safe, permitted place.",reward:15}
+];
+function renderMissions() {
+  $("missionList").innerHTML=missions.map(m=>{
+    const done=completed.includes(m.id);
+    return `<div class="mission"><div class="mission-icon">${m.icon}</div><div class="mission-copy"><strong>${m.name}</strong><p>${m.desc}</p></div><div>${done?'<span class="pill">DONE ✓</span>':`<button class="secondary" onclick="completeMission('${m.id}')">+${m.reward} 🪙</button>`}</div></div>`;
+  }).join("");
+}
+function completeMission(id) {
+  const mission=missions.find(m=>m.id===id);
+  if(!mission||completed.includes(id))return;
+  completed.push(id);
+  tokens+=mission.reward;
+  safeWrite("dayview_missions",completed);
+  saveTokens();renderMissions();
+  toast("Mission preview completed! +"+mission.reward+" tokens.");
+}
+function redeem(cost,name) {
+  if(tokens<cost){toast("Not enough tokens yet.");return;}
+  if(inventory.includes(name)){toast("You already have this demo creature.");return;}
+  if(!confirm("Redeem "+name+" for "+cost+" tokens? This is a local demonstration only."))return;
+  tokens-=cost;inventory.push(name);
+  safeWrite("dayview_inventory",inventory);saveTokens();
+  toast(name+" added to your local demo inventory.");
+}
+function saveProfile() {
+  profile.name=$("displayName").value.trim().slice(0,40)||"Dayview Explorer";
+  profile.bio=$("bioText").value.trim().slice(0,300);
+  safeWrite("dayview_profile",profile);
+  $("profileName").textContent=profile.name;
+  toast("Profile saved on this device.");
+}
+function locationNotice(box) {
+  if(box.checked)toast("No location is collected by this prototype.");
+}
+function clearLocalData() {
+  if(!confirm("Clear local posts, missions, likes, tokens, and profile data for this prototype?"))return;
+  ["dayview_tokens","dayview_posts","dayview_missions","dayview_likes","dayview_inventory","dayview_profile"].forEach(k=>localStorage.removeItem(k));
+  tokens=100;posts=[];completed=[];likes=[];inventory=["Ember the Fox"];
+  profile={name:"Dayview Explorer",bio:""};
+  $("displayName").value=profile.name;$("bioText").value="";
+  renderFeed();renderCommunity();renderMissions();saveTokens();updateStats();
+  toast("Local demo data cleared.");
+}
+
+$("displayName").value=profile.name||"Dayview Explorer";
+$("bioText").value=profile.bio||"";
+const today=new Date();
+$("greeting").textContent="YOUR WORLD, "+today.toLocaleDateString(undefined,{weekday:"long"}).toUpperCase();
+renderFeed();renderMissions();updateStats();
+
+if("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
